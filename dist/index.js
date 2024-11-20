@@ -29849,39 +29849,273 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 8213:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(7484);
+const github = __nccwpck_require__(3228);
+
+module.exports.getInputs = function () {
+  const JIRA_TOKEN = core.getInput('jira-token', { required: true });
+  const JIRA_BASE_URL = core.getInput('', { required: true });
+  const FAIL_WHEN_JIRA_ISSUE_NOT_FOUND =
+    core.getInput('fail-when-jira-issue-not-found') === 'true' || false;
+
+  const pr_title = github.context.payload.pull_request.title;
+  const pr_description = github.context.payload.pull_request.body;
+
+  return {
+    config: {
+      JIRA_TOKEN,
+      JIRA_BASE_URL,
+      FAIL_WHEN_JIRA_ISSUE_NOT_FOUND
+    },
+    pull_request: {
+      title: pr_title,
+      description: pr_description
+    }
+  };
+};
+
+
+/***/ }),
+
+/***/ 9324:
+/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
+
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   GithubConnector: () => (/* binding */ GithubConnector)
+/* harmony export */ });
+const github = __nccwpck_require__(3228);
+const { getInputs } = __nccwpck_require__(8213);
+
+class GithubConnector {
+  ghdata = null;
+  octokit = null;
+
+  constructor() {
+    const { GITHUB_TOKEN } = getInputs();
+
+    this.octokit = github.getOctokit(GITHUB_TOKEN);
+    this.ghdata = this._getGithubData();
+  }
+
+  get isPullRequest() {
+    return (
+      this.ghdata.eventname === 'pull_request' ||
+      this.ghdata.eventName === 'pull_request_target'
+    );
+  }
+
+  get headBranch() {
+    return this.ghdata.pull_request.head.ref;
+  }
+
+  async updatePrDetails(issue) {
+    const owner = this.githubData.owner;
+    const repo = this.githubData.repository.name;
+    const pull_number = this.githubData.pull_request.number;
+
+    const currentDescrription = await this.getPullRequestDescription(
+      owner,
+      repo,
+      pull_number
+    );
+
+    return await this.octokit.rest.pulls.update({
+      owner,
+      repo,
+      pull_number,
+      title: this._createTitle(issue),
+      body: this._createJiraDescription(currentDescrription, issue)
+    });
+  }
+
+  async getPullRequestDescription(owner, repository, pull_number) {
+    try {
+      const response = this.octokit.rest.pulls.get({
+        owner: owner,
+        repo: repository,
+        pull_number: pull_number
+      });
+
+      return response?.data?.body || '';
+    } catch (error) {
+      throw new Error(JSON.stringify(error, null, 4));
+    }
+  }
+
+  _getGithubData() {
+    const {
+      eventname,
+      payload: { repository, pull_request }
+    } = context;
+
+    let owner = null;
+
+    if (context?.payload?.organization) {
+      owner = context?.payload?.organization?.login;
+    } else {
+      console.log(
+        'Could not find organization, using repository owner instead.'
+      );
+      owner = context.payload.repository?.owner.login;
+    }
+
+    if (!owner) {
+      throw new Error('Could not find owner.');
+    }
+
+    return {
+      eventName,
+      repository,
+      owner,
+      pull_request
+    };
+  }
+
+  _createTitle(issue) {
+    return `${issue.key}: ${issue.summary}`;
+  }
+
+  _createJiraDescription(currentDescrription, issue) {
+    const { summary, description, url } = issue;
+    return `
+      ${currentDescrription}
+
+      --- Generated from Jira  ---
+
+      <a href="${url}">${summary}</a>
+
+      **Description:**
+
+      ${description}
+    `;
+  }
+}
+
+
+/***/ }),
+
+/***/ 5731:
+/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
+
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   JiraConnector: () => (/* binding */ JiraConnector)
+/* harmony export */ });
+class JiraConnector {
+  client = null;
+  JIRA_TOKEN = null;
+  JIRA_BASE_URL = null;
+
+  constructor() {
+    const { JIRA_TOKEN, JIRA_BASE_URL } = getInputs();
+
+    this.JIRA_BASE_URL = JIRA_BASE_URL;
+    this.JIRA_TOKEN = JIRA_TOKEN;
+
+    const encodedToken = Buffer.from(JIRA_TOKEN).toString('base64');
+
+    this.client = axios.create({
+      baseURL: `${JIRA_BASE_URL}/rest/api/3`,
+      timeout: 2000,
+      headers: { Authorization: `Basic ${encodedToken}` }
+    });
+  }
+
+  async getIssue(issueKey) {
+    const fields = 'summary,description,issuetype';
+
+    try {
+      const response = await this.client.get(
+        `/issue/${issueKey}?fields=${fields}`
+      );
+
+      return {
+        key: response.data.key,
+        summary: response.data.fields.summary,
+        description: response.data.fields.description,
+        type: response.data.fields.issuetype.name,
+        url: `${this.JIRA_BASE_URL}/browse/${response.data.key}`
+      };
+    } catch (error) {
+      throw new Error(JSON.stringify(error.response.data, null, 4));
+    }
+  }
+}
+
+
+/***/ }),
+
 /***/ 7936:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const core = __nccwpck_require__(7484)
-const github = __nccwpck_require__(3228)
+const core = __nccwpck_require__(7484);
+const github = __nccwpck_require__(3228);
+
+const getInputs = __nccwpck_require__(8213);
+
+const GithubConnector = __nccwpck_require__(9324);
+const JiraConnector = __nccwpck_require__(5731);
 
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
+  const { FAIL_WHEN_JIRA_ISSUE_NOT_FOUND } = getInputs();
+
   try {
-    // The `who-to-greet` input is defined in action metadata file
-    const whoToGreet = core.getInput('who-to-greet', { required: true })
-    core.info(`Hello, ${whoToGreet}!`)
+    const githubConnector = new GithubConnector();
+    const jiraConnector = new JiraConnector();
 
-    // Get the current time and set as an output
-    const time = new Date().toTimeString()
-    core.setOutput('time', time)
+    if (!githubConnector.isPullRequest) {
+      console.log('This action only works on pull requests.');
+      setOutputs(null, null);
+      process.exit(0);
+    }
 
-    // Output the payload for debugging
-    core.info(
-      `The event payload: ${JSON.stringify(github.context.payload, null, 2)}`
-    )
+    const branch = githubConnector.headBranch;
+    const jiraKeyMatch = branch.match(/[A-z]+\-\d+/gi);
+
+    if (!jiraKeyMatch) {
+      console.log('No Jira issue key found in the branch name.');
+      setOutputs(null, null);
+      process.exit(0);
+    }
+
+    const jiraIssueKey = jiraKeyMatch[0].toUpperCase();
+
+    const issue = await jiraConnector.getIssue(jiraIssueKey);
+    await githubConnector.updatePrDetails(issue);
+
+    setOutputs(jiraIssueKey);
   } catch (error) {
-    // Fail the workflow step if an error occurs
-    core.setFailed(error.message)
+    console.log('Failed to add Jira description to pull request.');
+    core.error(error.message);
+
+    setOutputs(null, null);
+
+    if (FAIL_WHEN_JIRA_ISSUE_NOT_FOUND) {
+      core.setFailed(error.message);
+      process.exit(1);
+    } else {
+      process.exit(0);
+    }
   }
+}
+
+function setOutputs(key) {
+  core.setOutput('jira-issue-key', key);
 }
 
 module.exports = {
   run
-}
+};
 
 
 /***/ }),
@@ -31778,6 +32012,34 @@ module.exports = parseParams
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";

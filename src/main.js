@@ -1,30 +1,62 @@
-const core = require('@actions/core')
-const github = require('@actions/github')
+const core = require('@actions/core');
+const github = require('@actions/github');
+
+const getInputs = require('./action-inputs');
+
+const GithubConnector = require('./github-connector');
+const JiraConnector = require('./jira-connector');
 
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
+  const { FAIL_WHEN_JIRA_ISSUE_NOT_FOUND } = getInputs();
+
   try {
-    // The `who-to-greet` input is defined in action metadata file
-    const whoToGreet = core.getInput('who-to-greet', { required: true })
-    core.info(`Hello, ${whoToGreet}!`)
+    const githubConnector = new GithubConnector();
+    const jiraConnector = new JiraConnector();
 
-    // Get the current time and set as an output
-    const time = new Date().toTimeString()
-    core.setOutput('time', time)
+    if (!githubConnector.isPullRequest) {
+      console.log('This action only works on pull requests.');
+      setOutputs(null, null);
+      process.exit(0);
+    }
 
-    // Output the payload for debugging
-    core.info(
-      `The event payload: ${JSON.stringify(github.context.payload, null, 2)}`
-    )
+    const branch = githubConnector.headBranch;
+    const jiraKeyMatch = branch.match(/[A-z]+\-\d+/gi);
+
+    if (!jiraKeyMatch) {
+      console.log('No Jira issue key found in the branch name.');
+      setOutputs(null, null);
+      process.exit(0);
+    }
+
+    const jiraIssueKey = jiraKeyMatch[0].toUpperCase();
+
+    const issue = await jiraConnector.getIssue(jiraIssueKey);
+    await githubConnector.updatePrDetails(issue);
+
+    setOutputs(jiraIssueKey);
   } catch (error) {
-    // Fail the workflow step if an error occurs
-    core.setFailed(error.message)
+    console.log('Failed to add Jira description to pull request.');
+    core.error(error.message);
+
+    setOutputs(null, null);
+
+    if (FAIL_WHEN_JIRA_ISSUE_NOT_FOUND) {
+      core.setFailed(error.message);
+      process.exit(1);
+    } else {
+      process.exit(0);
+    }
   }
+}
+
+function setOutputs(key) {
+  core.setOutput('jira-issue-key', key);
 }
 
 module.exports = {
   run
-}
+};

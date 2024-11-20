@@ -22,7 +22,29 @@ describe('action', () => {
     jest.clearAllMocks()
   })
 
-  it('sets the time output', async () => {
+  it('should be called with all inputs', async () => {
+    getInputMock.mockImplementation(name => {
+      switch (name) {
+        case 'jira-token':
+          return '123456-abcdef-7890'
+        default:
+          return ''
+      }
+    })
+
+    github.context.payload = {}
+
+    await main.run()
+
+    expect(runMock).toHaveReturned()
+    expect(infoMock).toHaveBeenCalledWith('Jira Token: 123456-abcdef-7890')
+  })
+
+  it('should be called all github context', async () => {
+    getInputMock.mockImplementation(name => {})
+  })
+
+  it.skip('sets the time output', async () => {
     // Mock the action's inputs
     getInputMock.mockImplementation(name => {
       switch (name) {
@@ -70,7 +92,7 @@ describe('action', () => {
     // Mock the action's inputs
     getInputMock.mockImplementation(name => {
       switch (name) {
-        case 'who-to-greet':
+        case 'jiratoken':
           throw new Error('Something went wrong...')
         default:
           return ''
