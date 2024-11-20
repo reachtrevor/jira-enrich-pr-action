@@ -5,9 +5,15 @@ author: GitHub Actions
 # Define your inputs here.
 inputs:
   jira-token:
-    description: Who to greet
+    description: Jira api key
     required: true
-    default: World
+  jira-base-url:
+    description: Organization base url
+    required: true
+  fail-when-jira-issue-not-found:
+    description: Fail the workflow when the Jira issue is not found
+    required: false
+    default: false
 
 # Define your outputs here.
 outputs:
