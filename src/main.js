@@ -23,7 +23,7 @@ async function run() {
     }
 
     const branch = githubConnector.headBranch;
-    const jiraKeyMatch = branch.match(/[A-z]+\-\d+/gi);
+    const jiraKeyMatch = branch.match(/[A-z]+\-\d+/gi); // IVN-1234
 
     if (!jiraKeyMatch) {
       console.log('No Jira issue key found in the branch name.');
