@@ -1,7 +1,6 @@
 const core = require('@actions/core');
-const github = require('@actions/github');
 
-const getInputs = require('./action-inputs');
+const { getInputs } = require('./action-inputs');
 
 const GithubConnector = require('./github-connector');
 const JiraConnector = require('./jira-connector');
