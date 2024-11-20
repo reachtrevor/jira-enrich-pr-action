@@ -1,3 +1,6 @@
+const axios = require('axios');
+const { getInputs } = require('./action-inputs');
+
 export class JiraConnector {
   client = null;
   JIRA_TOKEN = null;
