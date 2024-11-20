@@ -33406,8 +33406,8 @@ const core = __nccwpck_require__(7484);
 
 const { getInputs } = __nccwpck_require__(8213);
 
-const GithubConnector = __nccwpck_require__(9324);
-const JiraConnector = __nccwpck_require__(5731);
+const { GithubConnector } = __nccwpck_require__(9324);
+const { JiraConnector } = __nccwpck_require__(5731);
 
 /**
  * The main function for the action.

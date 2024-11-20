@@ -2,8 +2,8 @@ const core = require('@actions/core');
 
 const { getInputs } = require('./action-inputs');
 
-const GithubConnector = require('./github-connector');
-const JiraConnector = require('./jira-connector');
+const { GithubConnector } = require('./github-connector');
+const { JiraConnector } = require('./jira-connector');
 
 /**
  * The main function for the action.
