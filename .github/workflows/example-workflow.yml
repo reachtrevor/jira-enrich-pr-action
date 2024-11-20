@@ -3,11 +3,18 @@ name: Example Workflow
 on:
   workflow_dispatch:
     inputs:
-      who-to-greet:
+      jira-token:
         description: Who to greet in the log
         required: true
-        default: 'World'
         type: string
+      jira-base-url:
+        description: The base URL for the Jira instance
+        required: true
+        type: string
+      fail-when-jira-issue-not-found:
+        description: Fail the workflow when the Jira issue is not found
+        required: false
+        type: boolean
 
 permissions:
   actions: read
@@ -24,6 +31,10 @@ jobs:
       # actions/hello-world-javascript-action@v1.2.3
       - name: Print to Log
         id: print-to-log
-        uses: actions/hello-world-javascript-action@main
+        uses: reachtrevor/jira-enrich-pr-action@main
         with:
-          who-to-greet: ${{ inputs.who-to-greet }}
+          who-to-greet: ${{ inputs.jira-token }}
+          jira-token: ${{ inputs.jira-token }}
+          jira-base-url: ${{ inputs.jira-base-url }}
+          fail-when-jira-issue-not-found: |
+            ${{ inputs.fail-when-jira-issue-not-found }}

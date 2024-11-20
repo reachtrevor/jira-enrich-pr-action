@@ -4,7 +4,7 @@ author: GitHub Actions
 
 # Define your inputs here.
 inputs:
-  who-to-greet:
+  jira-token:
     description: Who to greet
     required: true
     default: World

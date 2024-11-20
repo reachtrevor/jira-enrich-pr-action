@@ -34,7 +34,7 @@ name: Example Workflow
 on:
   workflow_dispatch:
     inputs:
-      who-to-greet:
+      jira-token:
         description: Who to greet in the log
         required: true
         default: 'World'
@@ -53,7 +53,7 @@ jobs:
         id: print-to-log
         uses: actions/hello-world-javascript-action@main
         with:
-          who-to-greet: ${{ inputs.who-to-greet }}
+          jira-token: ${{ inputs.jira-token }}
 ```
 
 For example workflow runs, check out the
@@ -62,9 +62,9 @@ For example workflow runs, check out the
 
 ## Inputs
 
-| Input          | Default | Description                     |
-| -------------- | ------- | ------------------------------- |
-| `who-to-greet` | `World` | The name of the person to greet |
+| Input        | Default | Description                     |
+| ------------ | ------- | ------------------------------- |
+| `jira-token` | none    | The name of the person to greet |
 
 ## Outputs
 
