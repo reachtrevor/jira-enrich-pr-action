@@ -14,12 +14,12 @@ export class GithubConnector {
     this.ghdata = this._getGithubData();
 
     console.log(`Event name: ${this.ghdata.eventName}`);
-    console.log(`Payload: ${JSON.stringify(this.ghdata, null, 4)}`);
+    // console.log(`Payload: ${JSON.stringify(this.ghdata, null, 4)}`);
   }
 
   get isPullRequest() {
     return (
-      this.ghdata.eventname === 'pull_request' ||
+      this.ghdata.eventName === 'pull_request' ||
       this.ghdata.eventName === 'pull_request_target'
     );
   }
