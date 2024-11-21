@@ -12,6 +12,9 @@ export class GithubConnector {
 
     this.octokit = github.getOctokit(GITHUB_TOKEN);
     this.ghdata = this._getGithubData();
+
+    console.log(`Event name: ${this.ghdata.eventName}`);
+    console.log(`Payload: ${JSON.stringify(this.ghdata, null, 4)}`);
   }
 
   get isPullRequest() {
@@ -71,7 +74,7 @@ export class GithubConnector {
       owner = github.context?.payload?.organization?.login;
     } else {
       console.log(
-        'meh... Could not find organization, using repository owner instead.'
+        'Could not find organization, using repository owner instead.'
       );
       owner = github.context.payload.repository?.owner.login;
     }
