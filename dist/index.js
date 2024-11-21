@@ -33375,12 +33375,14 @@ class JiraConnector {
     console.log('got to jira token');
     console.log(this.JIRA_TOKEN);
 
-    const encodedToken = Buffer.from(JIRA_TOKEN).toString('base64');
+    const credentials = Buffer.from(
+      `trevor.pierce@be-net.com:${JIRA_TOKEN}`
+    ).toString('base64');
 
     this.client = axios.create({
       baseURL: `${JIRA_BASE_URL}/rest/api/3`,
       timeout: 2000,
-      headers: { Authorization: `Basic ${encodedToken}` }
+      headers: { Authorization: `Basic ${credentials}` }
     });
   }
 
