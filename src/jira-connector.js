@@ -12,9 +12,6 @@ export class JiraConnector {
     this.JIRA_BASE_URL = JIRA_BASE_URL;
     this.JIRA_TOKEN = JIRA_TOKEN;
 
-    console.log('got to jira token');
-    console.log(this.JIRA_TOKEN);
-
     const credentials = Buffer.from(
       `trevor.pierce@be-net.com:${JIRA_TOKEN}`
     ).toString('base64');

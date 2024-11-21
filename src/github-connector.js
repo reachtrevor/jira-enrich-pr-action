@@ -91,17 +91,8 @@ class GithubConnector {
   }
 
   _createJiraDescription(currentDescription, issue) {
-    const { summary, description, url } = issue;
-    return `
-      ${currentDescription}
-
-      --- Generated from Jira  ---
-
-      <a href="${url}">${summary}</a>
-
-      **Description:**
-
-      ${description}
+    const { summary, key, url } = issue;
+    return `${currentDescription}\n\n----- GENERATED FROM JIRA -----\n<a href="${url}">${key}: ${summary}</a>\n\n
     `;
   }
 }

@@ -33323,17 +33323,8 @@ class GithubConnector {
   }
 
   _createJiraDescription(currentDescription, issue) {
-    const { summary, description, url } = issue;
-    return `
-      ${currentDescription}
-
-      --- Generated from Jira  ---
-
-      <a href="${url}">${summary}</a>
-
-      **Description:**
-
-      ${description}
+    const { summary, key, url } = issue;
+    return `${currentDescription}\n\n----- GENERATED FROM JIRA -----\n<a href="${url}">${key}: ${summary}</a>\n\n
     `;
   }
 }
@@ -33364,9 +33355,6 @@ class JiraConnector {
 
     this.JIRA_BASE_URL = JIRA_BASE_URL;
     this.JIRA_TOKEN = JIRA_TOKEN;
-
-    console.log('got to jira token');
-    console.log(this.JIRA_TOKEN);
 
     const credentials = Buffer.from(
       `trevor.pierce@be-net.com:${JIRA_TOKEN}`
