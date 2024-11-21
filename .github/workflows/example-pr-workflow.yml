@@ -7,8 +7,9 @@ on:
       - edited
 
 permissions:
-  actions: write
-  contents: write
+  actions: read
+  contents: read
+  pull-requests: write
 
 jobs:
   enrich-pr-with-jira:
