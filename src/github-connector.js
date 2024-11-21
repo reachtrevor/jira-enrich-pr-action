@@ -79,6 +79,8 @@ export class GithubConnector {
       owner = github.context.payload.repository?.owner.login;
     }
 
+    console.log(`Owner: ${owner}`);
+
     if (!owner) {
       throw new Error('Could not find owner.');
     }
