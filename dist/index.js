@@ -33249,9 +33249,6 @@ class GithubConnector {
 
     this.octokit = github.getOctokit(GITHUB_TOKEN);
     this.ghdata = this._getGithubData();
-
-    console.log(`Event name: ${this.ghdata.eventName}`);
-    console.log(`Payload: ${JSON.stringify(this.ghdata, null, 4)}`);
   }
 
   get isPullRequest() {
@@ -33311,7 +33308,7 @@ class GithubConnector {
       owner = github.context?.payload?.organization?.login;
     } else {
       console.log(
-        'Could not find organization, using repository owner instead.'
+        'meh... Could not find organization, using repository owner instead.'
       );
       owner = github.context.payload.repository?.owner.login;
     }
@@ -33433,7 +33430,7 @@ async function run() {
     const jiraConnector = new JiraConnector();
 
     if (!githubConnector.isPullRequest) {
-      console.log('This action only works on pull requests.');
+      console.log('meh... This action only works on pull requests.');
       setOutputs(null, null);
       process.exit(0);
     }

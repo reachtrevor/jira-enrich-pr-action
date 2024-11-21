@@ -20,7 +20,7 @@ async function run() {
     const jiraConnector = new JiraConnector();
 
     if (!githubConnector.isPullRequest) {
-      console.log('This action only works on pull requests.');
+      console.log('meh... This action only works on pull requests.');
       setOutputs(null, null);
       process.exit(0);
     }
