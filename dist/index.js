@@ -33210,6 +33210,7 @@ const core = __nccwpck_require__(7484);
 const github = __nccwpck_require__(3228);
 
 module.exports.getInputs = function () {
+  const GITHUB_TOKEN = core.getInput('github-token', { required: true });
   const JIRA_TOKEN = core.getInput('jira-token', { required: true });
   const JIRA_BASE_URL = core.getInput('jira-base-url', { required: true });
   const FAIL_WHEN_JIRA_ISSUE_NOT_FOUND =
@@ -33218,6 +33219,7 @@ module.exports.getInputs = function () {
   return {
     JIRA_TOKEN,
     JIRA_BASE_URL,
+    GITHUB_TOKEN,
     FAIL_WHEN_JIRA_ISSUE_NOT_FOUND
   };
 };
