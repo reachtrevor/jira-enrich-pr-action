@@ -33211,14 +33211,16 @@ const github = __nccwpck_require__(3228);
 
 module.exports.getInputs = function () {
   const GITHUB_TOKEN = core.getInput('github-token', { required: true });
-  const JIRA_TOKEN = core.getInput('jira-token', { required: true });
+  const JIRA_TOKEN = core.getInput('jira-api-key', { required: true });
   const JIRA_BASE_URL = core.getInput('jira-base-url', { required: true });
+  const JIRA_USER_EMAIL = core.getInput('jira-user-email', { required: true });
   const FAIL_WHEN_JIRA_ISSUE_NOT_FOUND =
     core.getInput('fail-when-jira-issue-not-found') === 'true' || false;
 
   return {
     JIRA_TOKEN,
     JIRA_BASE_URL,
+    JIRA_USER_EMAIL,
     GITHUB_TOKEN,
     FAIL_WHEN_JIRA_ISSUE_NOT_FOUND
   };
@@ -33227,21 +33229,27 @@ module.exports.getInputs = function () {
 
 /***/ }),
 
-/***/ 9324:
-/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
+/***/ 689:
+/***/ ((module) => {
 
-"use strict";
-__nccwpck_require__.r(__webpack_exports__);
-/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   GithubConnector: () => (/* binding */ GithubConnector)
-/* harmony export */ });
+const HIDDEN_GENERATIVE_TAG = '<!--action-enrich-jira-->';
+
+module.exports = {
+  HIDDEN_GENERATIVE_TAG
+};
+
+
+/***/ }),
+
+/***/ 9324:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
 const github = __nccwpck_require__(3228);
+
+const { HIDDEN_GENERATIVE_TAG } = __nccwpck_require__(689);
 const { getInputs } = __nccwpck_require__(8213);
 
 class GithubConnector {
-  ghdata = null;
-  octokit = null;
-
   constructor() {
     const { GITHUB_TOKEN } = getInputs();
 
@@ -33251,7 +33259,7 @@ class GithubConnector {
 
   get isPullRequest() {
     return (
-      this.ghdata.eventname === 'pull_request' ||
+      this.ghdata.eventName === 'pull_request' ||
       this.ghdata.eventName === 'pull_request_target'
     );
   }
@@ -33261,11 +33269,11 @@ class GithubConnector {
   }
 
   async updatePrDetails(issue) {
-    const owner = this.githubData.owner;
-    const repo = this.githubData.repository.name;
-    const pull_number = this.githubData.pull_request.number;
+    const owner = this.ghdata.owner;
+    const repo = this.ghdata.repository.name;
+    const pull_number = this.ghdata.pull_request.number;
 
-    const currentDescrription = await this.getPullRequestDescription(
+    const currentDescription = await this.getPullRequestDescription(
       owner,
       repo,
       pull_number
@@ -33276,13 +33284,13 @@ class GithubConnector {
       repo,
       pull_number,
       title: this._createTitle(issue),
-      body: this._createJiraDescription(currentDescrription, issue)
+      body: this._createJiraDescription(currentDescription, issue)
     });
   }
 
   async getPullRequestDescription(owner, repository, pull_number) {
     try {
-      const response = this.octokit.rest.pulls.get({
+      const response = await this.octokit.rest.pulls.get({
         owner,
         repo: repository,
         pull_number
@@ -33302,13 +33310,13 @@ class GithubConnector {
 
     let owner = null;
 
-    if (github.context?.payload?.organization) {
-      owner = github.context?.payload?.organization?.login;
+    if (github.context.payload?.organization) {
+      owner = github.context.payload.organization.login;
     } else {
       console.log(
         'Could not find organization, using repository owner instead.'
       );
-      owner = github.context.payload.repository?.owner.login;
+      owner = github.context.payload.repository.owner.login;
     }
 
     if (!owner) {
@@ -33327,21 +33335,19 @@ class GithubConnector {
     return `${issue.key}: ${issue.summary}`;
   }
 
-  _createJiraDescription(currentDescrription, issue) {
-    const { summary, description, url } = issue;
-    return `
-      ${currentDescrription}
+  _createJiraDescription(currentDescription, issue) {
+    const { summary, key, url } = issue;
+    const exists = currentDescription.indexOf(HIDDEN_GENERATIVE_TAG) !== -1;
 
-      --- Generated from Jira  ---
+    if (exists) {
+      return currentDescription;
+    }
 
-      <a href="${url}">${summary}</a>
-
-      **Description:**
-
-      ${description}
-    `;
+    return `${HIDDEN_GENERATIVE_TAG}\n<a href="${url}">${key}: ${summary}</a>\n${HIDDEN_GENERATIVE_TAG}\n\n${currentDescription}`;
   }
 }
+
+module.exports = { GithubConnector };
 
 
 /***/ }),
@@ -33363,17 +33369,19 @@ class JiraConnector {
   JIRA_BASE_URL = null;
 
   constructor() {
-    const { JIRA_TOKEN, JIRA_BASE_URL } = getInputs();
+    const { JIRA_TOKEN, JIRA_BASE_URL, JIRA_USER_EMAIL } = getInputs();
 
     this.JIRA_BASE_URL = JIRA_BASE_URL;
     this.JIRA_TOKEN = JIRA_TOKEN;
 
-    const encodedToken = Buffer.from(JIRA_TOKEN).toString('base64');
+    const credentials = Buffer.from(
+      `${JIRA_USER_EMAIL}:${JIRA_TOKEN}`
+    ).toString('base64');
 
     this.client = axios.create({
       baseURL: `${JIRA_BASE_URL}/rest/api/3`,
       timeout: 2000,
-      headers: { Authorization: `Basic ${encodedToken}` }
+      headers: { Authorization: `Basic ${credentials}` }
     });
   }
 
@@ -40212,9 +40220,9 @@ var __webpack_exports__ = {};
 /**
  * The entrypoint for the action.
  */
-const { run } = __nccwpck_require__(7936)
+const { run } = __nccwpck_require__(7936);
 
-run()
+run();
 
 module.exports = __webpack_exports__;
 /******/ })()

@@ -1,4 +1,4 @@
-# Hello, World! JavaScript Action
+# Jira Enrich PR Action
 
 [![GitHub Super-Linter](https://github.com/actions/hello-world-javascript-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/actions/hello-world-javascript-action/actions/workflows/ci.yml/badge.svg)
@@ -29,20 +29,21 @@ follow the below instructions:
 Here's an example of how to use this action in a workflow file:
 
 ```yaml
-name: Example Workflow
+name: Example PR Workflow
 
 on:
-  workflow_dispatch:
-    inputs:
-      jira-token:
-        description: Who to greet in the log
-        required: true
-        default: 'World'
-        type: string
+  pull_request:
+    types:
+      - opened
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
 
 jobs:
-  say-hello:
-    name: Say Hello
+  enrich-pr-with-jira:
+    name: Enrich PR with Jira
     runs-on: ubuntu-latest
 
     steps:
@@ -51,9 +52,12 @@ jobs:
       # actions/hello-world-javascript-action@v1.2.3
       - name: Print to Log
         id: print-to-log
-        uses: actions/hello-world-javascript-action@main
+        uses: reachtrevor/jira-enrich-pr-action@GN-25
         with:
-          jira-token: ${{ inputs.jira-token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          jira-base-url: ${{ secrets.JIRA_BASE_URL }}
+          jira-api-key: ${{ secrets.JIRA_API_KEY }}
+          jira-user-email: ${{ secrets.JIRA_USER_EMAIL }}
 ```
 
 For example workflow runs, check out the

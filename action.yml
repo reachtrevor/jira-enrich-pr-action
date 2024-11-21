@@ -1,17 +1,20 @@
-name: Hello, World!
-description: Greet someone and record the time
-author: GitHub Actions
+name: Jira Enrich PR Action
+description: Enriches a Pull Request with Jira information based on branch name
+author: Trevor Pierce
 
 # Define your inputs here.
 inputs:
   github-token:
-    description: 'GitHub token'
-    required: true
-  jira-token:
-    description: Jira api key
+    description: GitHub token
     required: true
   jira-base-url:
     description: Organization base url
+    required: true
+  jira-api-key:
+    description: Jira api key
+    required: true
+  jira-user-email:
+    description: Jira user email used as part of the credentials
     required: true
   fail-when-jira-issue-not-found:
     description: Fail the workflow when the Jira issue is not found
@@ -19,9 +22,9 @@ inputs:
     default: false
 
 # Define your outputs here.
-outputs:
-  time:
-    description: The time we greeted you
+# outputs:
+#   time:
+#     description: The time we greeted you
 
 runs:
   using: node20

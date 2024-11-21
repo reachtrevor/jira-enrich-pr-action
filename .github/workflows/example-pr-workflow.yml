@@ -1,4 +1,4 @@
-name: Example Workflow
+name: Example PR Workflow
 
 on:
   pull_request:
@@ -8,10 +8,11 @@ on:
 permissions:
   actions: read
   contents: read
+  pull-requests: write
 
 jobs:
-  say-hello:
-    name: Say Hello
+  enrich-pr-with-jira:
+    name: Enrich PR with Jira
     runs-on: ubuntu-latest
 
     steps:
@@ -23,5 +24,6 @@ jobs:
         uses: reachtrevor/jira-enrich-pr-action@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          jira-token: ${{ secrets.JIRA_API_KEY }}
           jira-base-url: ${{ secrets.JIRA_BASE_URL }}
+          jira-api-key: ${{ secrets.JIRA_API_KEY }}
+          jira-user-email: ${{ secrets.JIRA_USER_EMAIL }}
