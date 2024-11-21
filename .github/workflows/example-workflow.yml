@@ -33,7 +33,7 @@ jobs:
         id: print-to-log
         uses: reachtrevor/jira-enrich-pr-action@main
         with:
-          who-to-greet: ${{ inputs.jira-token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           jira-token: ${{ inputs.jira-token }}
           jira-base-url: ${{ inputs.jira-base-url }}
           fail-when-jira-issue-not-found: |

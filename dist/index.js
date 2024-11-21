@@ -33281,9 +33281,9 @@ class GithubConnector {
   async getPullRequestDescription(owner, repository, pull_number) {
     try {
       const response = this.octokit.rest.pulls.get({
-        owner: owner,
+        owner,
         repo: repository,
-        pull_number: pull_number
+        pull_number
       });
 
       return response?.data?.body || '';
@@ -33294,19 +33294,19 @@ class GithubConnector {
 
   _getGithubData() {
     const {
-      eventname,
+      eventName,
       payload: { repository, pull_request }
-    } = context;
+    } = github.context;
 
     let owner = null;
 
-    if (context?.payload?.organization) {
-      owner = context?.payload?.organization?.login;
+    if (github.context?.payload?.organization) {
+      owner = github.context?.payload?.organization?.login;
     } else {
       console.log(
         'Could not find organization, using repository owner instead.'
       );
-      owner = context.payload.repository?.owner.login;
+      owner = github.context.payload.repository?.owner.login;
     }
 
     if (!owner) {
@@ -33427,7 +33427,7 @@ async function run() {
     }
 
     const branch = githubConnector.headBranch;
-    const jiraKeyMatch = branch.match(/[A-z]+\-\d+/gi); // IVN-1234
+    const jiraKeyMatch = branch.match(/[A-z]+-\d+/gi); // IVN-1234
 
     if (!jiraKeyMatch) {
       console.log('No Jira issue key found in the branch name.');

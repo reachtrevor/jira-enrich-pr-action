@@ -4,6 +4,9 @@ author: GitHub Actions
 
 # Define your inputs here.
 inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
   jira-token:
     description: Jira api key
     required: true
