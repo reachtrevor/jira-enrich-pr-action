@@ -1,4 +1,4 @@
-name: Example Workflow
+name: Example PR Workflow
 
 on:
   pull_request:
@@ -11,8 +11,8 @@ permissions:
   contents: read
 
 jobs:
-  say-hello:
-    name: Say Hello
+  enrich-pr-with-jira:
+    name: Enrich PR with Jira
     runs-on: ubuntu-latest
 
     steps:

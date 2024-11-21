@@ -10,9 +10,9 @@ const { JiraConnector } = require('./jira-connector');
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
-  const { FAIL_WHEN_JIRA_ISSUE_NOT_FOUND } = getInputs();
-
   core.info('Starting Jira Description Action...');
+
+  const { FAIL_WHEN_JIRA_ISSUE_NOT_FOUND } = getInputs();
 
   try {
     core.info('Creating connectors...');

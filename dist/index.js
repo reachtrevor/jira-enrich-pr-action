@@ -33421,9 +33421,9 @@ const { JiraConnector } = __nccwpck_require__(5731);
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
-  const { FAIL_WHEN_JIRA_ISSUE_NOT_FOUND } = getInputs();
-
   core.info('Starting Jira Description Action...');
+
+  const { FAIL_WHEN_JIRA_ISSUE_NOT_FOUND } = getInputs();
 
   try {
     core.info('Creating connectors...');
@@ -40220,9 +40220,9 @@ var __webpack_exports__ = {};
 /**
  * The entrypoint for the action.
  */
-const { run } = __nccwpck_require__(7936)
+const { run } = __nccwpck_require__(7936);
 
-run()
+run();
 
 module.exports = __webpack_exports__;
 /******/ })()
