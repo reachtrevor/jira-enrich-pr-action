@@ -13,8 +13,8 @@ export class GithubConnector {
     this.octokit = github.getOctokit(GITHUB_TOKEN);
     this.ghdata = this._getGithubData();
 
-    core.info(`Event name: ${this.ghdata.eventName}`);
-    core.info(`Payload: ${JSON.stringify(this.ghdata, null, 4)}`);
+    console.log(`Event name: ${this.ghdata.eventName}`);
+    console.log(`Payload: ${JSON.stringify(this.ghdata, null, 4)}`);
   }
 
   get isPullRequest() {
