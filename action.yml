@@ -1,6 +1,6 @@
-name: Hello, World!
-description: Greet someone and record the time
-author: GitHub Actions
+name: Jira Enrich PR Action
+description: Enriches a Pull Request with Jira information based on branch name
+author: Trevor Pierce
 
 # Define your inputs here.
 inputs:
@@ -22,9 +22,9 @@ inputs:
     default: false
 
 # Define your outputs here.
-outputs:
-  time:
-    description: The time we greeted you
+# outputs:
+#   time:
+#     description: The time we greeted you
 
 runs:
   using: node20
