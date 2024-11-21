@@ -12,7 +12,10 @@ const { JiraConnector } = require('./jira-connector');
 async function run() {
   const { FAIL_WHEN_JIRA_ISSUE_NOT_FOUND } = getInputs();
 
+  core.info('Starting Jira Description Action...');
+
   try {
+    core.info('Creating connectors...');
     const githubConnector = new GithubConnector();
     const jiraConnector = new JiraConnector();
 

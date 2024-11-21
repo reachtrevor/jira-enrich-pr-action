@@ -33237,6 +33237,7 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony export */ });
 const core = __nccwpck_require__(7484);
 const github = __nccwpck_require__(3228);
+
 const { getInputs } = __nccwpck_require__(8213);
 
 class GithubConnector {
@@ -33248,12 +33249,12 @@ class GithubConnector {
 
     this.octokit = github.getOctokit(GITHUB_TOKEN);
     this.ghdata = this._getGithubData();
+
+    core.info(`Event name: ${this.ghdata.eventName}`);
+    core.info(`Payload: ${JSON.stringify(this.ghdata, null, 4)}`);
   }
 
   get isPullRequest() {
-    core.info(`Event name: ${this.ghdata.eventName}`);
-    core.info(`Payload: ${JSON.stringify(this.ghdata, null, 4)}`);
-
     return (
       this.ghdata.eventname === 'pull_request' ||
       this.ghdata.eventName === 'pull_request_target'
@@ -33422,7 +33423,10 @@ const { JiraConnector } = __nccwpck_require__(5731);
 async function run() {
   const { FAIL_WHEN_JIRA_ISSUE_NOT_FOUND } = getInputs();
 
+  core.info('Starting Jira Description Action...');
+
   try {
+    core.info('Creating connectors...');
     const githubConnector = new GithubConnector();
     const jiraConnector = new JiraConnector();
 
