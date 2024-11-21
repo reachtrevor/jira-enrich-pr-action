@@ -21,7 +21,7 @@ jobs:
       # actions/hello-world-javascript-action@v1.2.3
       - name: Print to Log
         id: print-to-log
-        uses: reachtrevor/jira-enrich-pr-action@main
+        uses: reachtrevor/jira-enrich-pr-action@GN-25
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           jira-token: ${{ secrets.JIRA_API_KEY }}
