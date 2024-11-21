@@ -1,3 +1,4 @@
+const core = require('@actions/core');
 const github = require('@actions/github');
 const { getInputs } = require('./action-inputs');
 
@@ -13,6 +14,9 @@ export class GithubConnector {
   }
 
   get isPullRequest() {
+    core.info(`Event name: ${this.ghdata.eventName}`);
+    core.info(`Payload: ${JSON.stringify(this.ghdata, null, 4)}`);
+
     return (
       this.ghdata.eventname === 'pull_request' ||
       this.ghdata.eventName === 'pull_request_target'

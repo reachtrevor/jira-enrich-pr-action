@@ -33235,6 +33235,7 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
 /* harmony export */   GithubConnector: () => (/* binding */ GithubConnector)
 /* harmony export */ });
+const core = __nccwpck_require__(7484);
 const github = __nccwpck_require__(3228);
 const { getInputs } = __nccwpck_require__(8213);
 
@@ -33250,6 +33251,9 @@ class GithubConnector {
   }
 
   get isPullRequest() {
+    core.info(`Event name: ${this.ghdata.eventName}`);
+    core.info(`Payload: ${JSON.stringify(this.ghdata, null, 4)}`);
+
     return (
       this.ghdata.eventname === 'pull_request' ||
       this.ghdata.eventName === 'pull_request_target'
