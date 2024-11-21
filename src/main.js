@@ -10,17 +10,14 @@ const { JiraConnector } = require('./jira-connector');
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
-  core.info('Starting Jira Description Action...');
-
   const { FAIL_WHEN_JIRA_ISSUE_NOT_FOUND } = getInputs();
 
   try {
-    core.info('Creating connectors...');
     const githubConnector = new GithubConnector();
     const jiraConnector = new JiraConnector();
 
     if (!githubConnector.isPullRequest) {
-      console.log('meh... This action only works on pull requests.');
+      console.log('This action only works on pull requests.');
       setOutputs(null, null);
       process.exit(0);
     }

@@ -1,5 +1,6 @@
 const github = require('@actions/github');
 
+const { HIDDEN_GENERATIVE_TAG } = require('./consts');
 const { getInputs } = require('./action-inputs');
 
 class GithubConnector {
@@ -72,8 +73,6 @@ class GithubConnector {
       owner = github.context.payload.repository.owner.login;
     }
 
-    console.log(`Owner: ${owner}`);
-
     if (!owner) {
       throw new Error('Could not find owner.');
     }
@@ -92,8 +91,13 @@ class GithubConnector {
 
   _createJiraDescription(currentDescription, issue) {
     const { summary, key, url } = issue;
-    return `${currentDescription}\n\n----- GENERATED FROM JIRA -----\n<a href="${url}">${key}: ${summary}</a>\n\n
-    `;
+    const exists = currentDescription.indexOf(HIDDEN_GENERATIVE_TAG) !== -1;
+
+    if (exists) {
+      return currentDescription;
+    }
+
+    return `${HIDDEN_GENERATIVE_TAG}\n<a href="${url}">${key}: ${summary}</a>\n${HIDDEN_GENERATIVE_TAG}\n\n${currentDescription}`;
   }
 }
 

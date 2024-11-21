@@ -33213,15 +33213,29 @@ module.exports.getInputs = function () {
   const GITHUB_TOKEN = core.getInput('github-token', { required: true });
   const JIRA_TOKEN = core.getInput('jira-token', { required: true });
   const JIRA_BASE_URL = core.getInput('jira-base-url', { required: true });
+  const JIRA_USER_EMAIL = core.getInput('jira-user-email', { required: true });
   const FAIL_WHEN_JIRA_ISSUE_NOT_FOUND =
     core.getInput('fail-when-jira-issue-not-found') === 'true' || false;
 
   return {
     JIRA_TOKEN,
     JIRA_BASE_URL,
+    JIRA_USER_EMAIL,
     GITHUB_TOKEN,
     FAIL_WHEN_JIRA_ISSUE_NOT_FOUND
   };
+};
+
+
+/***/ }),
+
+/***/ 689:
+/***/ ((module) => {
+
+const HIDDEN_GENERATIVE_TAG = '<!--action-enrich-jira-->';
+
+module.exports = {
+  HIDDEN_GENERATIVE_TAG
 };
 
 
@@ -33232,6 +33246,7 @@ module.exports.getInputs = function () {
 
 const github = __nccwpck_require__(3228);
 
+const { HIDDEN_GENERATIVE_TAG } = __nccwpck_require__(689);
 const { getInputs } = __nccwpck_require__(8213);
 
 class GithubConnector {
@@ -33304,8 +33319,6 @@ class GithubConnector {
       owner = github.context.payload.repository.owner.login;
     }
 
-    console.log(`Owner: ${owner}`);
-
     if (!owner) {
       throw new Error('Could not find owner.');
     }
@@ -33324,8 +33337,13 @@ class GithubConnector {
 
   _createJiraDescription(currentDescription, issue) {
     const { summary, key, url } = issue;
-    return `${currentDescription}\n\n----- GENERATED FROM JIRA -----\n<a href="${url}">${key}: ${summary}</a>\n\n
-    `;
+    const exists = currentDescription.indexOf(HIDDEN_GENERATIVE_TAG) !== -1;
+
+    if (exists) {
+      return currentDescription;
+    }
+
+    return `${HIDDEN_GENERATIVE_TAG}\n<a href="${url}">${key}: ${summary}</a>\n${HIDDEN_GENERATIVE_TAG}\n\n${currentDescription}`;
   }
 }
 
@@ -33351,13 +33369,13 @@ class JiraConnector {
   JIRA_BASE_URL = null;
 
   constructor() {
-    const { JIRA_TOKEN, JIRA_BASE_URL } = getInputs();
+    const { JIRA_TOKEN, JIRA_BASE_URL, JIRA_USER_EMAIL } = getInputs();
 
     this.JIRA_BASE_URL = JIRA_BASE_URL;
     this.JIRA_TOKEN = JIRA_TOKEN;
 
     const credentials = Buffer.from(
-      `trevor.pierce@be-net.com:${JIRA_TOKEN}`
+      `${JIRA_USER_EMAIL}:${JIRA_TOKEN}`
     ).toString('base64');
 
     this.client = axios.create({
@@ -33406,17 +33424,14 @@ const { JiraConnector } = __nccwpck_require__(5731);
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
-  core.info('Starting Jira Description Action...');
-
   const { FAIL_WHEN_JIRA_ISSUE_NOT_FOUND } = getInputs();
 
   try {
-    core.info('Creating connectors...');
     const githubConnector = new GithubConnector();
     const jiraConnector = new JiraConnector();
 
     if (!githubConnector.isPullRequest) {
-      console.log('meh... This action only works on pull requests.');
+      console.log('This action only works on pull requests.');
       setOutputs(null, null);
       process.exit(0);
     }

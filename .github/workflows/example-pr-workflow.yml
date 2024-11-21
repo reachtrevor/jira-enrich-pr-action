@@ -25,5 +25,6 @@ jobs:
         uses: reachtrevor/jira-enrich-pr-action@GN-25
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          jira-token: ${{ secrets.JIRA_API_KEY }}
           jira-base-url: ${{ secrets.JIRA_BASE_URL }}
+          jira-api-key: ${{ secrets.JIRA_API_KEY }}
+          jira-user-email: ${{ secrets.JIRA_USER_EMAIL }}

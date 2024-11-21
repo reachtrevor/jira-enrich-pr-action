@@ -5,13 +5,16 @@ author: GitHub Actions
 # Define your inputs here.
 inputs:
   github-token:
-    description: 'GitHub token'
-    required: true
-  jira-token:
-    description: Jira api key
+    description: GitHub token
     required: true
   jira-base-url:
     description: Organization base url
+    required: true
+  jira-api-key:
+    description: Jira api key
+    required: true
+  jira-user-email:
+    description: Jira user email used as part of the credentials
     required: true
   fail-when-jira-issue-not-found:
     description: Fail the workflow when the Jira issue is not found

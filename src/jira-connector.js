@@ -7,13 +7,13 @@ export class JiraConnector {
   JIRA_BASE_URL = null;
 
   constructor() {
-    const { JIRA_TOKEN, JIRA_BASE_URL } = getInputs();
+    const { JIRA_TOKEN, JIRA_BASE_URL, JIRA_USER_EMAIL } = getInputs();
 
     this.JIRA_BASE_URL = JIRA_BASE_URL;
     this.JIRA_TOKEN = JIRA_TOKEN;
 
     const credentials = Buffer.from(
-      `trevor.pierce@be-net.com:${JIRA_TOKEN}`
+      `${JIRA_USER_EMAIL}:${JIRA_TOKEN}`
     ).toString('base64');
 
     this.client = axios.create({
