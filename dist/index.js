@@ -33249,9 +33249,6 @@ class GithubConnector {
 
     this.octokit = github.getOctokit(GITHUB_TOKEN);
     this.ghdata = this._getGithubData();
-
-    console.log(`Event name: ${this.ghdata.eventName}`);
-    // console.log(`Payload: ${JSON.stringify(this.ghdata, null, 4)}`);
   }
 
   get isPullRequest() {
@@ -33376,6 +33373,8 @@ class JiraConnector {
     this.JIRA_TOKEN = JIRA_TOKEN;
 
     const encodedToken = Buffer.from(JIRA_TOKEN).toString('base64');
+
+    console.log(JIRA_TOKEN);
 
     this.client = axios.create({
       baseURL: `${JIRA_BASE_URL}/rest/api/3`,
