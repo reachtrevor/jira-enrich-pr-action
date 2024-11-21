@@ -12,9 +12,10 @@ export class JiraConnector {
     this.JIRA_BASE_URL = JIRA_BASE_URL;
     this.JIRA_TOKEN = JIRA_TOKEN;
 
-    const encodedToken = Buffer.from(JIRA_TOKEN).toString('base64');
+    console.log('got to jira token');
+    console.log(this.JIRA_TOKEN);
 
-    console.log(JIRA_TOKEN);
+    const encodedToken = Buffer.from(JIRA_TOKEN).toString('base64');
 
     this.client = axios.create({
       baseURL: `${JIRA_BASE_URL}/rest/api/3`,
