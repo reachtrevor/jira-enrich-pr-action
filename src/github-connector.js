@@ -90,14 +90,14 @@ class GithubConnector {
   }
 
   _createJiraDescription(currentDescription, issue) {
-    const { summary, key, url } = issue;
+    const { description, key, summary, url } = issue;
     const exists = currentDescription.indexOf(HIDDEN_GENERATIVE_TAG) !== -1;
 
     if (exists) {
       return currentDescription;
     }
 
-    return `${HIDDEN_GENERATIVE_TAG}\n<a href="${url}">${key}: ${summary}</a>\n${HIDDEN_GENERATIVE_TAG}\n\n${currentDescription}`;
+    return `${HIDDEN_GENERATIVE_TAG}\n<a href="${url}">${key}: ${summary}</a>\n\n**Description:**\n${description}\n${HIDDEN_GENERATIVE_TAG}\n\n${currentDescription}`;
   }
 }
 

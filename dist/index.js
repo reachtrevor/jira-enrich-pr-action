@@ -33336,14 +33336,14 @@ class GithubConnector {
   }
 
   _createJiraDescription(currentDescription, issue) {
-    const { summary, key, url } = issue;
+    const { description, key, summary, url } = issue;
     const exists = currentDescription.indexOf(HIDDEN_GENERATIVE_TAG) !== -1;
 
     if (exists) {
       return currentDescription;
     }
 
-    return `${HIDDEN_GENERATIVE_TAG}\n<a href="${url}">${key}: ${summary}</a>\n${HIDDEN_GENERATIVE_TAG}\n\n${currentDescription}`;
+    return `${HIDDEN_GENERATIVE_TAG}\n<a href="${url}">${key}: ${summary}</a>\n\n**Description:**\n${description}\n${HIDDEN_GENERATIVE_TAG}\n\n${currentDescription}`;
   }
 }
 
@@ -33361,6 +33361,7 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony export */   JiraConnector: () => (/* binding */ JiraConnector)
 /* harmony export */ });
 const axios = __nccwpck_require__(7269);
+
 const { getInputs } = __nccwpck_require__(8213);
 
 class JiraConnector {
@@ -33379,7 +33380,7 @@ class JiraConnector {
     ).toString('base64');
 
     this.client = axios.create({
-      baseURL: `${JIRA_BASE_URL}/rest/api/3`,
+      baseURL: `${JIRA_BASE_URL}/rest/api/2`,
       timeout: 2000,
       headers: { Authorization: `Basic ${credentials}` }
     });
@@ -33390,7 +33391,7 @@ class JiraConnector {
 
     try {
       const response = await this.client.get(
-        `/issue/${issueKey}?fields=${fields}`
+        `/issue/${issueKey}?fields=${fields},expand=renderedFields`
       );
 
       return {

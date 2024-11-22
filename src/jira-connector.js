@@ -1,4 +1,5 @@
 const axios = require('axios');
+
 const { getInputs } = require('./action-inputs');
 
 export class JiraConnector {
@@ -17,7 +18,7 @@ export class JiraConnector {
     ).toString('base64');
 
     this.client = axios.create({
-      baseURL: `${JIRA_BASE_URL}/rest/api/3`,
+      baseURL: `${JIRA_BASE_URL}/rest/api/2`,
       timeout: 2000,
       headers: { Authorization: `Basic ${credentials}` }
     });
@@ -28,7 +29,7 @@ export class JiraConnector {
 
     try {
       const response = await this.client.get(
-        `/issue/${issueKey}?fields=${fields}`
+        `/issue/${issueKey}?fields=${fields},expand=renderedFields`
       );
 
       return {
