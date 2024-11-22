@@ -99,8 +99,8 @@ class GithubConnector {
 
     return `
       ${HIDDEN_GENERATIVE_TAG}\n
-      <a href="${url}">${key}:&nbsp;${summary}</a>\n\n
-      **Issue Type:** <img src="${issuetypeicon}" /> ${issuetype}\n
+      <a&nbsp;href="${url}">${key}:&nbsp;${summary}</a>\n\n
+      **Issue&nbsp;Type:** <img&nbsp;src="${issuetypeicon}"/>&nbsp;${issuetype}\n
       **Description:**\n
       ${description}\n
       ${HIDDEN_GENERATIVE_TAG}\n\n
