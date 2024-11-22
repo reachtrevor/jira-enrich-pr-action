@@ -36,7 +36,8 @@ export class JiraConnector {
         key: response.data.key,
         summary: response.data.fields.summary,
         description: response.data.fields.description,
-        issuetype: response.data.fields.issuetype.name,
+        issuetype: response.data.fields.issuetype?.name,
+        issuetypeicon: response.data.fields.issuetype?.iconUrl,
         url: `${this.JIRA_BASE_URL}/browse/${response.data.key}`
       };
     } catch (error) {

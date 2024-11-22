@@ -33336,14 +33336,22 @@ class GithubConnector {
   }
 
   _createJiraDescription(currentDescription, issue) {
-    const { description, key, summary, url } = issue;
+    const { description, issuetype, issuetypeicon, key, summary, url } = issue;
     const exists = currentDescription.indexOf(HIDDEN_GENERATIVE_TAG) !== -1;
 
     if (exists) {
       return currentDescription;
     }
 
-    return `${HIDDEN_GENERATIVE_TAG}\n<a href="${url}">${key}: ${summary}</a>\n\n**Description:**\n${description}\n${HIDDEN_GENERATIVE_TAG}\n\n${currentDescription}`;
+    return `
+      ${HIDDEN_GENERATIVE_TAG}\n
+      <a href="${url}">${key}:&nbsp;${summary}</a>\n\n
+      **Issue Type:** <img src="${issuetypeicon}" /> ${issuetype}\n
+      **Description:**\n
+      ${description}\n
+      ${HIDDEN_GENERATIVE_TAG}\n\n
+      ${currentDescription}
+    `.replace(/ /gm, '');
   }
 }
 
@@ -33398,7 +33406,8 @@ class JiraConnector {
         key: response.data.key,
         summary: response.data.fields.summary,
         description: response.data.fields.description,
-        type: response.data.fields.issuetype.name,
+        issuetype: response.data.fields.issuetype?.name,
+        issuetypeicon: response.data.fields.issuetype?.iconUrl,
         url: `${this.JIRA_BASE_URL}/browse/${response.data.key}`
       };
     } catch (error) {
