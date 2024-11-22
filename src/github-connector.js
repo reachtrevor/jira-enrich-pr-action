@@ -92,6 +92,7 @@ class GithubConnector {
   _createJiraDescription(currentDescription, issue) {
     const { description, issuetype, issuetypeicon, key, summary, url } = issue;
     const exists = currentDescription.indexOf(HIDDEN_GENERATIVE_TAG) !== -1;
+    const spacesAndImages = /(?:\n)( |\t|\r)+|(!.+!)/gm;
 
     if (exists) {
       return currentDescription;
@@ -99,13 +100,13 @@ class GithubConnector {
 
     return `
       ${HIDDEN_GENERATIVE_TAG}
-      \n<a href="${url}">${key}:&nbsp;${summary}</a>
-      \n\n**Issue&nbsp;Type:** <img src="${issuetypeicon}"/>${issuetype}
+      \n<a href="${url}">${key}: ${summary}</a>
+      \n\n<img width="12" height="12" src="${issuetypeicon}"/> ${issuetype}
       \n**Description:**
       \n${description}
       \n${HIDDEN_GENERATIVE_TAG}
       \n\n${currentDescription}
-    `.replace(/(?:\n)( |\t|\r)+/gm, '');
+    `.replace(spacesAndImages, '');
   }
 }
 
