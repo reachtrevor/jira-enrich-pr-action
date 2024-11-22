@@ -3,26 +3,13 @@
 [![GitHub Super-Linter](https://github.com/actions/hello-world-javascript-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/actions/hello-world-javascript-action/actions/workflows/ci.yml/badge.svg)
 
-This action prints `Hello, World!` or `Hello, <who-to-greet>!` to the log. To
-learn how this action was built, see
-[Creating a JavaScript action](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action).
+This action searches for a Jira issue key in the branch name, fetches information about issue. The action will update the title of your Pull Request and the description of the Pull Request.
 
-## Create Your Own Action
+![image](https://github.com/user-attachments/assets/38493ab3-1afb-4c9f-85cb-9b116e13f9cb)
 
-To create your own action, you can use this repository as a template! Just
-follow the below instructions:
+### Motivation
 
-1. Click the **Use this template** button at the top of the repository
-1. Select **Create a new repository**
-1. Select an owner and name for your new repository
-1. Click **Create repository**
-1. Clone your new repository
-
-> [!CAUTION]
->
-> Make sure to remove or update the [`CODEOWNERS`](./CODEOWNERS) file! For
-> details on how to use this file, see
-> [About code owners](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
+Get context about the change instantly and save you and your peers hours of copy-pasting and describing Pull Requests. 
 
 ## Usage
 
@@ -67,11 +54,9 @@ For example workflow runs, check out the
 ## Inputs
 
 | Input        | Default | Description                     |
-| ------------ | ------- | ------------------------------- |
-| `jira-token` | none    | The name of the person to greet |
-
-## Outputs
-
-| Output | Description             |
-| ------ | ----------------------- |
-| `time` | The time we greeted you |
+| ----------------- | ------- | --------------------------------------- |
+| `github-token`    | -    | Github token provided by Github Actions |
+| `jira-api-key`    | -    | User API key from Jira Cloud |
+| `jira-base-url`   | -    | Organization base url for Jira Cloud |
+| `jira-user-email` | -    | User email tied to API key from Jira Cloud |
+| `fail-when-jira-issue-not-found` | false | Enabled to enforce a Jira key in the branch name |
