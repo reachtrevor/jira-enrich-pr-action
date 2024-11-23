@@ -33216,12 +33216,10 @@ module.exports.getInputs = function () {
   const JIRA_USER_EMAIL = core.getInput('jira-user-email', { required: true });
   const FAIL_WHEN_JIRA_ISSUE_NOT_FOUND =
     core.getInput('fail-when-jira-issue-not-found') === 'true' || false;
-  const DESCRIPTION_CHARACTER_LIMIT = core.getInput(
-    'description-character-limit'
-  );
 
-  console.log('DESCRIPTION CHARACTER LIMIT', DESCRIPTION_CHARACTER_LIMIT);
-  console.log(typeof DESCRIPTION_CHARACTER_LIMIT);
+  const DESCRIPTION_CHARACTER_LIMIT = Number(
+    core.getInput('description-character-limit')
+  );
 
   return {
     JIRA_TOKEN,
@@ -33229,7 +33227,11 @@ module.exports.getInputs = function () {
     JIRA_USER_EMAIL,
     GITHUB_TOKEN,
     FAIL_WHEN_JIRA_ISSUE_NOT_FOUND,
-    DESCRIPTION_CHARACTER_LIMIT
+    DESCRIPTION_CHARACTER_LIMIT:
+      Number.isNaN(DESCRIPTION_CHARACTER_LIMIT) ||
+      DESCRIPTION_CHARACTER_LIMIT <= 0
+        ? null
+        : DESCRIPTION_CHARACTER_LIMIT
   };
 };
 
