@@ -12,9 +12,6 @@ module.exports.getInputs = function () {
     'description-character-limit'
   );
 
-  console.log('DESCRIPTION CHARACTER LIMIT', DESCRIPTION_CHARACTER_LIMIT);
-  console.log(typeof DESCRIPTION_CHARACTER_LIMIT);
-
   return {
     JIRA_TOKEN,
     JIRA_BASE_URL,
