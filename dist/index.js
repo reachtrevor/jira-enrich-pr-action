@@ -33221,17 +33221,22 @@ module.exports.getInputs = function () {
     core.getInput('description-character-limit')
   );
 
+  const nextDescriptionLimit =
+    Number.isNaN(DESCRIPTION_CHARACTER_LIMIT) ||
+    DESCRIPTION_CHARACTER_LIMIT <= 0
+      ? null
+      : DESCRIPTION_CHARACTER_LIMIT;
+
+  console.log('---DESCRIPTONLIMIT---', DESCRIPTION_CHARACTER_LIMIT);
+  console.log('nextDescriptionLimit', nextDescriptionLimit);
+
   return {
     JIRA_TOKEN,
     JIRA_BASE_URL,
     JIRA_USER_EMAIL,
     GITHUB_TOKEN,
     FAIL_WHEN_JIRA_ISSUE_NOT_FOUND,
-    DESCRIPTION_CHARACTER_LIMIT:
-      Number.isNaN(DESCRIPTION_CHARACTER_LIMIT) ||
-      DESCRIPTION_CHARACTER_LIMIT <= 0
-        ? null
-        : DESCRIPTION_CHARACTER_LIMIT
+    DESCRIPTION_CHARACTER_LIMIT: nextDescriptionLimit
   };
 };
 
