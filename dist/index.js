@@ -33227,9 +33227,6 @@ module.exports.getInputs = function () {
       ? null
       : DESCRIPTION_CHARACTER_LIMIT;
 
-  console.log('---DESCRIPTONLIMIT---', DESCRIPTION_CHARACTER_LIMIT);
-  console.log('nextDescriptionLimit', nextDescriptionLimit);
-
   return {
     JIRA_TOKEN,
     JIRA_BASE_URL,
@@ -33415,6 +33412,7 @@ class JiraConnector {
       );
 
       let description = response.data.fields.description;
+
       if (
         DESCRIPTION_CHARACTER_LIMIT &&
         description.length > DESCRIPTION_CHARACTER_LIMIT
@@ -33425,7 +33423,7 @@ class JiraConnector {
       return {
         key: response.data.key,
         summary: response.data.fields.summary,
-        description: response.data.fields.description,
+        description,
         issuetype: response.data.fields.issuetype?.name,
         issuetypeicon: response.data.fields.issuetype?.iconUrl,
         url: `${this.JIRA_BASE_URL}/browse/${response.data.key}`

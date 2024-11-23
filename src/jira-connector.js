@@ -30,6 +30,7 @@ export class JiraConnector {
       );
 
       let description = response.data.fields.description;
+
       if (
         DESCRIPTION_CHARACTER_LIMIT &&
         description.length > DESCRIPTION_CHARACTER_LIMIT
@@ -40,7 +41,7 @@ export class JiraConnector {
       return {
         key: response.data.key,
         summary: response.data.fields.summary,
-        description: response.data.fields.description,
+        description,
         issuetype: response.data.fields.issuetype?.name,
         issuetypeicon: response.data.fields.issuetype?.iconUrl,
         url: `${this.JIRA_BASE_URL}/browse/${response.data.key}`
