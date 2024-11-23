@@ -28,4 +28,4 @@ jobs:
           jira-base-url: ${{ secrets.JIRA_BASE_URL }}
           jira-api-key: ${{ secrets.JIRA_API_KEY }}
           jira-user-email: ${{ secrets.JIRA_USER_EMAIL }}
-          # description-character-limit: 50
+          description-character-limit: 50
