@@ -3,26 +3,18 @@
 [![GitHub Super-Linter](https://github.com/actions/hello-world-javascript-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/actions/hello-world-javascript-action/actions/workflows/ci.yml/badge.svg)
 
-This action prints `Hello, World!` or `Hello, <who-to-greet>!` to the log. To
-learn how this action was built, see
-[Creating a JavaScript action](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action).
+This action searches for a Jira issue key in the branch name, fetches
+information about issue. The action will update the title of your Pull Request
+and the description of the Pull Request.
 
-## Create Your Own Action
+E.g. `feature/PRO-123` or `LLM-1874`
 
-To create your own action, you can use this repository as a template! Just
-follow the below instructions:
+![image](https://github.com/user-attachments/assets/38493ab3-1afb-4c9f-85cb-9b116e13f9cb)
 
-1. Click the **Use this template** button at the top of the repository
-1. Select **Create a new repository**
-1. Select an owner and name for your new repository
-1. Click **Create repository**
-1. Clone your new repository
+### Motivation
 
-> [!CAUTION]
->
-> Make sure to remove or update the [`CODEOWNERS`](./CODEOWNERS) file! For
-> details on how to use this file, see
-> [About code owners](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
+Get context about the change instantly and save you and your peers hours of
+copy-pasting and describing Pull Requests.
 
 ## Usage
 
@@ -47,12 +39,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Change @main to a specific commit SHA or version tag, e.g.:
-      # actions/hello-world-javascript-action@e76147da8e5c81eaf017dede5645551d4b94427b
-      # actions/hello-world-javascript-action@v1.2.3
       - name: Print to Log
         id: print-to-log
-        uses: reachtrevor/jira-enrich-pr-action@v1.1.0
+        uses: reachtrevor/actions-enrich-pr-with-jira@v1.2.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           jira-base-url: ${{ secrets.JIRA_BASE_URL }}
@@ -60,18 +49,39 @@ jobs:
           jira-user-email: ${{ secrets.JIRA_USER_EMAIL }}
 ```
 
-For example workflow runs, check out the
-[Actions tab](https://github.com/actions/hello-world-javascript-action/actions)!
-🚀
-
 ## Inputs
 
-| Input        | Default | Description                     |
-| ------------ | ------- | ------------------------------- |
-| `jira-token` | none    | The name of the person to greet |
+| Input                            | Default | Description                                                   |
+| -------------------------------- | ------- | ------------------------------------------------------------- |
+| `github-token`                   | -       | Github token provided by Github Actions                       |
+| `jira-api-key`                   | -       | User API key from Jira Cloud                                  |
+| `jira-base-url`                  | -       | Organization base url for Jira Cloud                          |
+| `jira-user-email`                | -       | User email tied to API key from Jira Cloud                    |
+| `fail-when-jira-issue-not-found` | false   | Enabled to enforce a Jira key in the branch name              |
+| `description-character-limit`    | -       | Limit the description from Jira to a specific character count |
 
-## Outputs
+## FAQ
 
-| Output | Description             |
-| ------ | ----------------------- |
-| `time` | The time we greeted you |
+#### Do images get copied over?
+
+No, there is code to strip images from Jira, images require authentication to
+view and thus cannot be shown in the Pull Request description.
+
+#### Will sensitive data be copied over?
+
+Everything in the Jira description will be copied over with the exception of
+images. Just edit your description once it gets populated and remove the
+sensitive bits.
+
+Some may be concerned about sensitive data making to Github in the first place,
+my response is twofold.
+
+1. It doesn't go into the git history of your repository
+2. If a bad actor can get into your organization's private repository you've got
+   bigger problems.
+
+#### Can I modify how the title or description is formatted?
+
+Not right now, I've put in what I believe are smart defaults. If I get enough
+issues raised about it or someone wants to donate $$ to make it happen then I'll
+do a simple version of title formatting.

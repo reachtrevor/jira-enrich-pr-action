@@ -5,21 +5,29 @@ author: Trevor Pierce
 # Define your inputs here.
 inputs:
   github-token:
-    description: GitHub token
+    description: Github token provided by Github Actions
     required: true
-  jira-base-url:
-    description: Organization base url
-    required: true
+
   jira-api-key:
-    description: Jira api key
+    description: User API key from Jira
     required: true
+
+  jira-base-url:
+    description: Organization base url for Jira
+    required: true
+
   jira-user-email:
-    description: Jira user email used as part of the credentials
+    description: User email tied to API key from Jira
     required: true
+
   fail-when-jira-issue-not-found:
-    description: Fail the workflow when the Jira issue is not found
+    description: Enabled to enforce a Jira key in the branch name
     required: false
     default: false
+
+  description-character-limit:
+    description: Limit the description from Jira to a specific character count
+    required: false
 
 # Define your outputs here.
 # outputs:

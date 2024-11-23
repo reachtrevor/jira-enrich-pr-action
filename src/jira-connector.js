@@ -3,10 +3,6 @@ const axios = require('axios');
 const { getInputs } = require('./action-inputs');
 
 export class JiraConnector {
-  client = null;
-  JIRA_TOKEN = null;
-  JIRA_BASE_URL = null;
-
   constructor() {
     const { JIRA_TOKEN, JIRA_BASE_URL, JIRA_USER_EMAIL } = getInputs();
 
@@ -25,12 +21,21 @@ export class JiraConnector {
   }
 
   async getIssue(issueKey) {
+    const { DESCRIPTION_CHARACTER_LIMIT } = getInputs();
     const fields = 'summary,description,issuetype';
 
     try {
       const response = await this.client.get(
         `/issue/${issueKey}?fields=${fields},expand=renderedFields`
       );
+
+      let description = response.data.fields.description;
+      if (
+        DESCRIPTION_CHARACTER_LIMIT &&
+        description.length > DESCRIPTION_CHARACTER_LIMIT
+      ) {
+        description = `${description.substring(0, DESCRIPTION_CHARACTER_LIMIT)}...`;
+      }
 
       return {
         key: response.data.key,
