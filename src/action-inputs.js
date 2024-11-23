@@ -9,11 +9,22 @@ module.exports.getInputs = function () {
   const FAIL_WHEN_JIRA_ISSUE_NOT_FOUND =
     core.getInput('fail-when-jira-issue-not-found') === 'true' || false;
 
+  const DESCRIPTION_CHARACTER_LIMIT = Number(
+    core.getInput('description-character-limit')
+  );
+
+  const nextDescriptionLimit =
+    Number.isNaN(DESCRIPTION_CHARACTER_LIMIT) ||
+    DESCRIPTION_CHARACTER_LIMIT <= 0
+      ? null
+      : DESCRIPTION_CHARACTER_LIMIT;
+
   return {
     JIRA_TOKEN,
     JIRA_BASE_URL,
     JIRA_USER_EMAIL,
     GITHUB_TOKEN,
-    FAIL_WHEN_JIRA_ISSUE_NOT_FOUND
+    FAIL_WHEN_JIRA_ISSUE_NOT_FOUND,
+    DESCRIPTION_CHARACTER_LIMIT: nextDescriptionLimit
   };
 };

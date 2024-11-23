@@ -33217,12 +33217,23 @@ module.exports.getInputs = function () {
   const FAIL_WHEN_JIRA_ISSUE_NOT_FOUND =
     core.getInput('fail-when-jira-issue-not-found') === 'true' || false;
 
+  const DESCRIPTION_CHARACTER_LIMIT = Number(
+    core.getInput('description-character-limit')
+  );
+
+  const nextDescriptionLimit =
+    Number.isNaN(DESCRIPTION_CHARACTER_LIMIT) ||
+    DESCRIPTION_CHARACTER_LIMIT <= 0
+      ? null
+      : DESCRIPTION_CHARACTER_LIMIT;
+
   return {
     JIRA_TOKEN,
     JIRA_BASE_URL,
     JIRA_USER_EMAIL,
     GITHUB_TOKEN,
-    FAIL_WHEN_JIRA_ISSUE_NOT_FOUND
+    FAIL_WHEN_JIRA_ISSUE_NOT_FOUND,
+    DESCRIPTION_CHARACTER_LIMIT: nextDescriptionLimit
   };
 };
 
@@ -33374,10 +33385,6 @@ const axios = __nccwpck_require__(7269);
 const { getInputs } = __nccwpck_require__(8213);
 
 class JiraConnector {
-  client = null;
-  JIRA_TOKEN = null;
-  JIRA_BASE_URL = null;
-
   constructor() {
     const { JIRA_TOKEN, JIRA_BASE_URL, JIRA_USER_EMAIL } = getInputs();
 
@@ -33396,6 +33403,7 @@ class JiraConnector {
   }
 
   async getIssue(issueKey) {
+    const { DESCRIPTION_CHARACTER_LIMIT } = getInputs();
     const fields = 'summary,description,issuetype';
 
     try {
@@ -33403,10 +33411,19 @@ class JiraConnector {
         `/issue/${issueKey}?fields=${fields},expand=renderedFields`
       );
 
+      let description = response.data.fields.description;
+
+      if (
+        DESCRIPTION_CHARACTER_LIMIT &&
+        description.length > DESCRIPTION_CHARACTER_LIMIT
+      ) {
+        description = `${description.substring(0, DESCRIPTION_CHARACTER_LIMIT)}...`;
+      }
+
       return {
         key: response.data.key,
         summary: response.data.fields.summary,
-        description: response.data.fields.description,
+        description,
         issuetype: response.data.fields.issuetype?.name,
         issuetypeicon: response.data.fields.issuetype?.iconUrl,
         url: `${this.JIRA_BASE_URL}/browse/${response.data.key}`
